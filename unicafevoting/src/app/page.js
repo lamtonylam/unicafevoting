@@ -2,6 +2,7 @@
 
 import { supabase } from './lib/supabase';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   const [lunchgroups, setLunchgroups] = useState([]);
@@ -88,52 +89,18 @@ export default function Home() {
       </form>
       <br></br>
       <hr></hr>
-      Vote restaurants for lunch
-      <br></br>
-      Choose lunch group
-      <form onSubmit={submitVote}>
-        {lunchgroups.map((lunchgroup) => (
-          <div key={lunchgroup.id}>
-            <input
-              type='radio'
-              id={`lunchgroup-${lunchgroup.id}`}
-              name='lunchgroups'
-              value={lunchgroup.id}
-              onChange={(e) => setvoteLunchGroup(e.target.value)}
-            />
-            <label htmlFor={`lunchgroup-${lunchgroup.id}`}>
-              {lunchgroup.created_by} at {lunchgroup.lunchtime}
-            </label>
-          </div>
-        ))}
-        <br></br>
-        Choose Unicafe restaurant
-        {restaurants.map((restaurant) => (
-          <div key={restaurant.id}>
-            <input
-              type='radio'
-              id={`restaurant-${restaurant.id}`}
-              name='restaurants'
-              value={restaurant.id}
-              onChange={(e) => setSelectedRestaurant(e.target.value)}
-            />
-            <label htmlFor={`restaurant-${restaurant.id}`}>
-              {restaurant.name}
-            </label>
-          </div>
-        ))}
-        <input
-          placeholder='Enter your name'
-          type='text'
-          value={voterName}
-          onChange={(e) => setVoterName(e.target.value)}
-        />
-        <br></br>
-        <br></br>
-        <button type='submit'>Vote</button>
-      </form>
-      <br></br>
-      <br></br>
+      <h3>Lunchgroups</h3>
+      {lunchgroups.map((lunchgroup) => (
+        <div key={lunchgroup.id}>
+          <h3>
+            {lunchgroup.created_by} - {lunchgroup.lunchtime}
+          </h3>
+          <Link href={`/lunchgroup/${lunchgroup.id}`}>
+            {' '}
+            Vote for lunch group
+          </Link>
+        </div>
+      ))}
       {/* <div>
         <h3>Debug Information</h3>
         <pre>
