@@ -19,7 +19,7 @@ export default function Page({ params: { slug } }) {
   const fetchVotes = async () => {
     const { data, error } = await supabase
       .from('votes')
-      .select('restaurant_id, restaurants(name), voter')
+      .select('id, restaurant_id, restaurants(name), voter')
       .eq('lunchgroup_id', slug);
     if (error) {
       console.error('Error fetching vote counts:', error);
@@ -72,8 +72,8 @@ export default function Page({ params: { slug } }) {
       <h3>Votes:</h3>
       <ul>
         {votes.map((vote) => (
-          <li>
-            <div key={vote.restaurant_id}>
+          <li key={vote.id}>
+            <div>
               Restaurant: {vote.restaurants.name}
               <br></br>
               Voter: {vote.voter}
