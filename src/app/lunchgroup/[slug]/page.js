@@ -1,11 +1,13 @@
 'use client';
 import { supabase } from '../../lib/supabase';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function Page({ params: { slug } }) {
   const [lunchgroupdata, setLunchgroupdata] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [votes, setVotes] = useState([]);
+  const [unicafeData, setUnicafeData] = useState([]);
 
   // voting form
   const [voteRestaurant, setSelectedRestaurant] = useState('');
@@ -35,7 +37,9 @@ export default function Page({ params: { slug } }) {
       .eq('id', slug)
       .order('id', { ascending: true });
     if (error) console.log('error', error);
-    else setLunchgroupdata(data);
+    else {
+      setLunchgroupdata(data);
+    }
 
     const { data: restaurantsData, error: restaurantsError } = await supabase
       .from('restaurants')
@@ -62,6 +66,27 @@ export default function Page({ params: { slug } }) {
     fetchVotes();
   };
 
+  // unicafe restaurant menus
+  useEffect(() => {
+    if (lunchgroupdata.length > 0 && lunchgroupdata[0].lunchtime) {
+      let refactored_lunchtime = new Date(lunchgroupdata[0].lunchtime)
+        .toISOString()
+        .slice(0, 10);
+
+      if (restaurants.length > 0) {
+        restaurants.forEach((restaurant) => {
+          axios
+            .get(
+              `https://makkara.fly.dev/api/datesearch/${restaurant.name}/${refactored_lunchtime}`
+            )
+            .then((response) => {
+              setUnicafeData((prev) => [...prev, response.data]);
+            });
+        });
+      }
+    }
+  }, [lunchgroupdata, restaurants]);
+
   return (
     <div>
       <a href='/'>Back to frontpage</a>
@@ -82,6 +107,7 @@ export default function Page({ params: { slug } }) {
         ))}
       </ul>
       <hr></hr>
+      <h3>Unicafe menus:</h3>
       <h3>Vote for lunch restaurant</h3>
       <h3>Restaurants</h3>
       Choose Unicafe restaurant
