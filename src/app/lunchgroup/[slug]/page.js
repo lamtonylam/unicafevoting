@@ -2,9 +2,11 @@
 import { supabase } from '../../lib/supabase';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { subHours } from 'date-fns';
 
 export default function Page({ params: { slug } }) {
   const [lunchgroupdata, setLunchgroupdata] = useState([]);
+  const [lunchtime, setLunchtime] = useState('');
   const [restaurants, setRestaurants] = useState([]);
   const [votes, setVotes] = useState([]);
   const [unicafeData, setUnicafeData] = useState([]);
@@ -85,14 +87,26 @@ export default function Page({ params: { slug } }) {
         });
       }
     }
-  }, [lunchgroupdata, restaurants]);
+  }, [restaurants]);
+
+  // lunchtime formatting
+  useEffect(() => {
+    if (lunchgroupdata && lunchgroupdata.length > 0) {
+      let lunchtimefixed = lunchgroupdata[0]?.lunchtime;
+      if (lunchtimefixed) {
+        lunchtimefixed = new Date(lunchtimefixed);
+        lunchtimefixed = subHours(lunchtimefixed, 3);
+        setLunchtime(lunchtimefixed.toLocaleString('fi-FI'));
+      }
+    }
+  }, [lunchgroupdata]);
 
   return (
     <div>
       <a href='/'>Back to frontpage</a>
       <h1>Lunchgroup: </h1>
       <h3>Created by: {lunchgroupdata[0]?.created_by}</h3>
-      <h3>Lunch time: {lunchgroupdata[0]?.lunchtime}</h3>
+      <h3>Lunch time: {lunchtime}</h3>
       <hr></hr>
       <h3>Votes:</h3>
       <ul>
@@ -107,25 +121,38 @@ export default function Page({ params: { slug } }) {
         ))}
       </ul>
       <hr></hr>
+
       <h3>Unicafe menus:</h3>
+      <h3>Chemicum</h3>
+      <ul>
+        {unicafeData.length > 1 &&
+          unicafeData[0].map((menu, index) => <li key={index}>{menu}</li>)}
+      </ul>
+      <h3>Exactum</h3>
+      <ul>
+        {unicafeData.length > 1 &&
+          unicafeData[1].map((menu, index) => <li key={index}>{menu}</li>)}
+      </ul>
+      <hr></hr>
       <h3>Vote for lunch restaurant</h3>
       <h3>Restaurants</h3>
-      Choose Unicafe restaurant
       <form onSubmit={submitVote}>
-        {restaurants.map((restaurant) => (
-          <div key={restaurant.id}>
-            <input
-              type='radio'
-              id={`restaurant-${restaurant.id}`}
-              name='restaurants'
-              value={restaurant.id}
-              onChange={(e) => setSelectedRestaurant(e.target.value)}
-            />
-            <label htmlFor={`restaurant-${restaurant.id}`}>
-              {restaurant.name}
-            </label>
-          </div>
-        ))}
+        <ul>
+          {restaurants.map((restaurant) => (
+            <li key={restaurant.id}>
+              <input
+                type='radio'
+                id={`restaurant-${restaurant.id}`}
+                name='restaurants'
+                value={restaurant.id}
+                onChange={(e) => setSelectedRestaurant(e.target.value)}
+              />
+              <label htmlFor={`restaurant-${restaurant.id}`}>
+                {restaurant.name}
+              </label>
+            </li>
+          ))}
+        </ul>
         <br></br>
         <input
           placeholder='Enter your name'
