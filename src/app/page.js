@@ -49,23 +49,6 @@ export default function Home() {
     fetchLunchgroups();
   };
 
-  const submitVote = async (e) => {
-    e.preventDefault();
-    const { data, error } = await supabase.from('votes').insert([
-      {
-        lunchgroup_id: voteLunchGroup,
-        restaurant_id: voteRestaurant,
-        voter: voterName,
-      },
-    ]);
-    if (error) console.log('error', error);
-    else console.log('success', data);
-    setvoteLunchGroup('');
-    setSelectedRestaurant('');
-    setVoterName('');
-    fetchLunchgroups();
-  };
-
   return (
     <div>
       <h2>Unicafe Lunch Voting App</h2>
