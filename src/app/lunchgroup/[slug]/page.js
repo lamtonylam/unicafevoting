@@ -2,7 +2,7 @@
 import { supabase } from '../../lib/supabase';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { subHours } from 'date-fns';
+import { set, subHours } from 'date-fns';
 
 export default function Page({ params: { slug } }) {
   const [lunchgroupdata, setLunchgroupdata] = useState([]);
@@ -15,9 +15,14 @@ export default function Page({ params: { slug } }) {
   const [voteRestaurant, setSelectedRestaurant] = useState('');
   const [voterName, setVoterName] = useState('');
 
+  // loading state
+  const [loadingLunchInfo, setLoadingLunchInfo] = useState(true);
+  const [loadingUnicafeData, setLoadingUnicafeData] = useState(true);
+
   useEffect(() => {
     fetchLunchgroups();
     fetchVotes();
+    setLoadingLunchInfo(false);
   }, []);
 
   const fetchVotes = async () => {
@@ -87,6 +92,7 @@ export default function Page({ params: { slug } }) {
         });
       }
     }
+    setLoadingUnicafeData(false);
   }, [restaurants]);
 
   // lunchtime formatting
@@ -105,34 +111,46 @@ export default function Page({ params: { slug } }) {
     <div>
       <a href='/'>Back to frontpage</a>
       <h1>Lunchgroup: </h1>
-      <h3>Created by: {lunchgroupdata[0]?.created_by}</h3>
-      <h3>Lunch time: {lunchtime}</h3>
-      <hr></hr>
-      <h3>Votes:</h3>
-      <ul>
-        {votes.map((vote) => (
-          <li key={vote.id}>
-            <div>
-              Restaurant: {vote.restaurants.name}
-              <br></br>
-              Voter: {vote.voter}
-            </div>
-          </li>
-        ))}
-      </ul>
-      <hr></hr>
+      {loadingLunchInfo ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <h3>Created by: {lunchgroupdata[0]?.created_by}</h3>
+          <h3>Lunch time: {lunchtime}</h3>
+          <hr />
+          <h3>Votes:</h3>
+          <ul>
+            {votes.map((vote) => (
+              <li key={vote.id}>
+                <div>
+                  Restaurant: {vote.restaurants.name}
+                  <br />
+                  Voter: {vote.voter}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <hr />
+        </>
+      )}
+      {loadingUnicafeData ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <h3>Unicafe menus on {lunchtime.slice(0, 10)}</h3>
+          <h3>Chemicum</h3>
+          <ul>
+            {unicafeData.length > 1 &&
+              unicafeData[0].map((menu, index) => <li key={index}>{menu}</li>)}
+          </ul>
+          <h3>Exactum</h3>
+          <ul>
+            {unicafeData.length > 1 &&
+              unicafeData[1].map((menu, index) => <li key={index}>{menu}</li>)}
+          </ul>
+        </>
+      )}
 
-      <h3>Unicafe menus:</h3>
-      <h3>Chemicum</h3>
-      <ul>
-        {unicafeData.length > 1 &&
-          unicafeData[0].map((menu, index) => <li key={index}>{menu}</li>)}
-      </ul>
-      <h3>Exactum</h3>
-      <ul>
-        {unicafeData.length > 1 &&
-          unicafeData[1].map((menu, index) => <li key={index}>{menu}</li>)}
-      </ul>
       <hr></hr>
       <h3>Vote for lunch restaurant</h3>
       <h3>Restaurants</h3>
@@ -153,15 +171,15 @@ export default function Page({ params: { slug } }) {
             </li>
           ))}
         </ul>
-        <br></br>
+        <br />
         <input
           placeholder='Enter your name'
           type='text'
           value={voterName}
           onChange={(e) => setVoterName(e.target.value)}
         />{' '}
-        <br></br>
-        <br></br>
+        <br />
+        <br />
         <button type='submit'>Vote</button>
       </form>
     </div>
