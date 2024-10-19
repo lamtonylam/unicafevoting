@@ -163,6 +163,7 @@ export default function Page({ params: { slug } }) {
                 id={`restaurant-${restaurant.id}`}
                 name='restaurants'
                 value={restaurant.id}
+                checked={voteRestaurant === restaurant.id.toString()}
                 onChange={(e) => setSelectedRestaurant(e.target.value)}
               />
               <label htmlFor={`restaurant-${restaurant.id}`}>
