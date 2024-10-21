@@ -71,11 +71,9 @@ export default function Page({ params: { slug } }) {
     else console.log('success', data);
     setSelectedRestaurant('');
     setVoterName('');
-    fetchLunchgroups();
     fetchVotes();
   };
 
-  // unicafe restaurant menus
   useEffect(() => {
     if (lunchgroupdata.length > 0 && lunchgroupdata[0].lunchtime) {
       let refactored_lunchtime = new Date(lunchgroupdata[0].lunchtime)
@@ -101,7 +99,7 @@ export default function Page({ params: { slug } }) {
 
     // sort unicafeData by restaurant name
     setUnicafeData((prev) => sortArray([...prev], { by: 'restaurantName' }));
-  }, [restaurants]);
+  }, [lunchgroupdata, restaurants]);
 
   // lunchtime formatting
   useEffect(() => {
