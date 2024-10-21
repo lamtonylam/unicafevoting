@@ -14,6 +14,7 @@
     "date-fns": "^4.1.0",
     "next": "14.2.15",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sort-array": "^5.0.0"
   }
 }

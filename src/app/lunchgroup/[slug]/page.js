@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { set, subHours } from 'date-fns';
+import sortArray from 'sort-array';
 
 export default function Page({ params: { slug } }) {
   const [lunchgroupdata, setLunchgroupdata] = useState([]);
@@ -22,7 +23,6 @@ export default function Page({ params: { slug } }) {
   useEffect(() => {
     fetchLunchgroups();
     fetchVotes();
-    setLoadingLunchInfo(false);
   }, []);
 
   const fetchVotes = async () => {
@@ -54,6 +54,8 @@ export default function Page({ params: { slug } }) {
       .order('id', { ascending: true });
     if (restaurantsError) console.log('error', restaurantsError);
     setRestaurants(restaurantsData);
+
+    setLoadingLunchInfo(false);
   }
 
   const submitVote = async (e) => {
@@ -87,12 +89,18 @@ export default function Page({ params: { slug } }) {
               `https://makkara.fly.dev/api/datesearch/${restaurant.name}/${refactored_lunchtime}`
             )
             .then((response) => {
-              setUnicafeData((prev) => [...prev, response.data]);
+              setUnicafeData((prev) => [
+                ...prev,
+                { restaurantName: restaurant.name, lunchmenu: response.data },
+              ]);
             });
         });
       }
     }
     setLoadingUnicafeData(false);
+
+    // sort unicafeData by restaurant name
+    setUnicafeData((prev) => sortArray([...prev], { by: 'restaurantName' }));
   }, [restaurants]);
 
   // lunchtime formatting
@@ -138,15 +146,17 @@ export default function Page({ params: { slug } }) {
       ) : (
         <>
           <h3>Unicafe menus on {lunchtime.slice(0, 10)}</h3>
-          <h3>Chemicum</h3>
           <ul>
-            {unicafeData.length > 1 &&
-              unicafeData[0].map((menu, index) => <li key={index}>{menu}</li>)}
-          </ul>
-          <h3>Exactum</h3>
-          <ul>
-            {unicafeData.length > 1 &&
-              unicafeData[1].map((menu, index) => <li key={index}>{menu}</li>)}
+            {unicafeData.map((restaurant) => (
+              <li key={restaurant.restaurantName}>
+                <h3>{restaurant.restaurantName}</h3>
+                <ul>
+                  {restaurant.lunchmenu.map((menu, index) => (
+                    <li key={index}>{menu}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
           </ul>
         </>
       )}
