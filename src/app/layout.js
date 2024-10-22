@@ -22,6 +22,19 @@ export default function RootLayout({ children }) {
     <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
+        <br />
+        <br />
+        <br />
+        <br />
+        <p>
+          <a
+            href='https://www.cs.helsinki.fi/u/tonylam/'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            Tony Lam
+          </a>
+        </p>
       </body>
     </html>
   );

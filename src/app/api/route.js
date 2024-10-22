@@ -5,7 +5,7 @@ const params = {
   latitude: 60.2094,
   longitude: 24.9642,
   hourly: ['temperature_2m', 'precipitation'],
-  timezone: 'Europe/Moscow',
+  timezone: 'GMT',
 };
 const url = 'https://api.open-meteo.com/v1/forecast';
 const responses = await fetchWeatherApi(url, params);

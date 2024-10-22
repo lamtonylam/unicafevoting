@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { set, subHours } from 'date-fns';
 import sortArray from 'sort-array';
+import { getWeather } from '../../lib/weather';
 
 export default function Page({ params: { slug } }) {
   const [lunchgroupdata, setLunchgroupdata] = useState([]);
@@ -19,6 +20,9 @@ export default function Page({ params: { slug } }) {
   // loading state
   const [loadingLunchInfo, setLoadingLunchInfo] = useState(true);
   const [loadingUnicafeData, setLoadingUnicafeData] = useState(true);
+
+  // weather data
+  const [weatherData, setWeatherData] = useState({});
 
   useEffect(() => {
     fetchLunchgroups();
@@ -112,6 +116,14 @@ export default function Page({ params: { slug } }) {
     }
   }, [lunchgroupdata]);
 
+  useEffect(() => {
+    if (lunchgroupdata.length > 0) {
+      getWeather(lunchgroupdata[0]?.lunchtime).then((data) => {
+        setWeatherData(data);
+      });
+    }
+  }, [lunchgroupdata]);
+
   return (
     <div>
       <a href='/'>Back to frontpage</a>
@@ -135,6 +147,11 @@ export default function Page({ params: { slug } }) {
               </li>
             ))}
           </ul>
+          <hr /> <h3>Weather in Kumpula at {lunchtime}:</h3>
+          <p>
+            Temperature: {weatherData.temperature}°C, Precipitation:{' '}
+            {weatherData.precipitation}mm
+          </p>
           <hr />
         </>
       )}
