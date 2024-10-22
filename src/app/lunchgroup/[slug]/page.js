@@ -107,7 +107,6 @@ export default function Page({ params: { slug } }) {
       let lunchtimefixed = lunchgroupdata[0]?.lunchtime;
       if (lunchtimefixed) {
         lunchtimefixed = new Date(lunchtimefixed);
-        lunchtimefixed = subHours(lunchtimefixed, 3);
         setLunchtime(lunchtimefixed.toLocaleString('fi-FI'));
       }
     }
