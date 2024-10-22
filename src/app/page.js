@@ -39,14 +39,22 @@ export default function Home() {
 
   const submitNewLunchGroupName = async (e) => {
     e.preventDefault();
+    const lunchtime_with_timezone = new Date(lunchtime);
     const { data, error } = await supabase
       .from('lunch_group')
-      .insert([{ created_by: newLunchGroupName, lunchtime: lunchtime }]);
+      .insert([
+        { created_by: newLunchGroupName, lunchtime: lunchtime_with_timezone },
+      ]);
     if (error) console.log('error', error);
     else console.log('success', data);
     setnewLunchGroupName('');
     setLunchtime('');
     fetchLunchgroups();
+  };
+
+  const timefixed = (time) => {
+    const date = new Date(time);
+    return date.toLocaleString('fi-FI');
   };
 
   return (
@@ -76,7 +84,7 @@ export default function Home() {
       {lunchgroups.map((lunchgroup) => (
         <div key={lunchgroup.id}>
           <h3>
-            {lunchgroup.created_by} - {lunchgroup.lunchtime}
+            {lunchgroup.created_by} - {timefixed(lunchgroup.lunchtime)}
           </h3>
           <Link href={`/lunchgroup/${lunchgroup.id}`}>
             {' '}
