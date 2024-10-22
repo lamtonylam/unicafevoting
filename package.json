@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -13,6 +13,7 @@
     "axios": "^1.7.7",
     "date-fns": "^4.1.0",
     "next": "14.2.15",
+    "openmeteo": "^1.1.4",
     "react": "^18",
     "react-dom": "^18",
     "sort-array": "^5.0.0"
