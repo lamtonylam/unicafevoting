@@ -134,6 +134,11 @@ export default function Page({ params: { slug } }) {
         <>
           <h3>Created by: {lunchgroupdata[0]?.created_by}</h3>
           <h3>Lunch time: {lunchtime}</h3>
+          {lunchgroupdata[0]?.notes && (
+            <>
+              <h3>Meeting place: {lunchgroupdata[0]?.notes}</h3>
+            </>
+          )}
           <hr />
           <h3>Votes:</h3>
           <ul>
