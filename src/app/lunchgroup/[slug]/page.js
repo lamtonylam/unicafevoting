@@ -149,8 +149,14 @@ export default function Page({ params: { slug } }) {
           </ul>
           <hr /> <h3>Weather in Kumpula at {lunchtime}:</h3>
           <p>
-            Temperature: {weatherData.temperature}°C, Precipitation:{' '}
-            {weatherData.precipitation}mm
+            {weatherData ? (
+              <p>
+                Temperature: {weatherData.temperature}°C, Precipitation:{' '}
+                {weatherData.precipitation}mm
+              </p>
+            ) : (
+              'No weather data found, it could be that the lunchtime has passed'
+            )}
           </p>
           <hr />
         </>
