@@ -35,6 +35,7 @@ export default function RootLayout({ children }) {
             Tony Lam
           </a>
         </p>
+        <a href='https://open-meteo.com/'>Weather data by Open-Meteo.com</a>
       </body>
     </html>
   );
