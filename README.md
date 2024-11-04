@@ -19,6 +19,7 @@ Allowing diners to make informed decisions where to eat.
 ## Supabase database
 
 Database structure for supabase, run this in supabase
+![postgres-db](https://github.com/user-attachments/assets/be35b4f8-e8ec-4bc5-b4f4-5eeb03c1f690)
 
 ```plaintext
 CREATE TABLE lunch_group (
