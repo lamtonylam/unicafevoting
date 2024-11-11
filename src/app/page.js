@@ -101,9 +101,13 @@ export default function Home() {
         <br />
         <button type='submit'>Create new lunch group</button>
       </form>
-      <br></br>
-      <hr></hr>
-      <h3>Lunchgroups</h3>
+      <br />
+      <hr />
+      <h2>Lunch groups</h2>
+      <p>
+        Entries older than 3 days are automatically removed from the database.
+      </p>
+      <br />
       {lunchgroups.map((lunchgroup) => (
         <div key={lunchgroup.id}>
           <h3>

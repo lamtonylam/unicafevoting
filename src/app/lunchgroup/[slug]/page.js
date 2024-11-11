@@ -88,7 +88,7 @@ export default function Page({ params: { slug } }) {
         restaurants.forEach((restaurant) => {
           axios
             .get(
-              `https://makkara.fly.dev/api/datesearch/${restaurant.name}/${refactored_lunchtime}`
+              `/api/unicafe?restaurant=${restaurant.name}&date=${refactored_lunchtime}`
             )
             .then((response) => {
               setUnicafeData((prev) => [
