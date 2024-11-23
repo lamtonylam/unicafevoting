@@ -8,6 +8,7 @@ export async function GET() {
     .order('id', { ascending: true });
 
   if (error) {
+    console.error('Error fetching lunch groups:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

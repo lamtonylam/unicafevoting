@@ -1,8 +1,8 @@
 'use client';
 
-import { supabase } from './lib/supabase';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
 
 export default function Home() {
   const [lunchgroups, setLunchgroups] = useState([]);
@@ -18,14 +18,8 @@ export default function Home() {
 
   async function fetchLunchgroups() {
     try {
-      const response = await fetch('/api/fetch_lunchgroups');
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error);
-      }
-
-      setLunchgroups(data);
+      const response = await axios.get('/api/fetch_lunchgroups');
+      setLunchgroups(response.data);
     } catch (error) {
       console.error('Error fetching lunch groups:', error);
     }
@@ -33,25 +27,27 @@ export default function Home() {
 
   const submitNewLunchGroupName = async (e) => {
     e.preventDefault();
+
     const lunchtime_with_timezone = new Date(lunchtime);
     if (newLunchGroupName === '' || lunchtime === '') {
       alert('Please enter all required fields');
       return;
     }
-    const { data, error } = await supabase
-      .from('lunch_group')
-      .insert([
-        {
-          created_by: newLunchGroupName,
-          lunchtime: lunchtime_with_timezone,
-          notes: lunchNotes,
-        },
-      ]);
-    if (error) console.log('error', error);
-    else console.log('success', data);
-    setnewLunchGroupName('');
-    setLunchtime('');
-    fetchLunchgroups();
+
+    try {
+      await axios.post('/api/createlunchgroup', {
+        created_by: newLunchGroupName,
+        lunchtime: lunchtime_with_timezone,
+        notes: lunchNotes,
+      });
+      setnewLunchGroupName('');
+      setLunchtime('');
+      setLunchNotes('');
+      fetchLunchgroups();
+    } catch (error) {
+      console.error('Error creating lunch group:', error);
+      alert('Failed to create lunch group');
+    }
   };
 
   const timefixed = (time) => {
