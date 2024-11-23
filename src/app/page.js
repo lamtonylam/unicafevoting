@@ -6,36 +6,29 @@ import Link from 'next/link';
 
 export default function Home() {
   const [lunchgroups, setLunchgroups] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
 
   // creating new lunch group
   const [newLunchGroupName, setnewLunchGroupName] = useState('');
   const [lunchtime, setLunchtime] = useState('');
   const [lunchNotes, setLunchNotes] = useState('');
 
-  // voting lunch restaurants
-  const [voteLunchGroup, setvoteLunchGroup] = useState('');
-  const [voteRestaurant, setSelectedRestaurant] = useState('');
-  const [voterName, setVoterName] = useState('');
-
   useEffect(() => {
     fetchLunchgroups();
   }, []);
 
   async function fetchLunchgroups() {
-    const { data, error } = await supabase
-      .from('lunch_group')
-      .select('*')
-      .order('id', { ascending: true });
-    if (error) console.log('error', error);
-    else setLunchgroups(data);
+    try {
+      const response = await fetch('/api/fetch_lunchgroups');
+      const data = await response.json();
 
-    const { data: restaurantsData, error: restaurantsError } = await supabase
-      .from('restaurants')
-      .select('*')
-      .order('id', { ascending: true });
-    if (restaurantsError) console.log('error', restaurantsError);
-    setRestaurants(restaurantsData);
+      if (!response.ok) {
+        throw new Error(data.error);
+      }
+
+      setLunchgroups(data);
+    } catch (error) {
+      console.error('Error fetching lunch groups:', error);
+    }
   }
 
   const submitNewLunchGroupName = async (e) => {
