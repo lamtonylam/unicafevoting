@@ -3,17 +3,6 @@ import './globals.css';
 import { IBM_Plex_Mono } from 'next/font/google';
 import styles from './page.module.css';
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-});
-
 export const metadata = {
   title: 'Unicafe voting app',
   description: 'Unicafe voting app, for voting where to eat',
