@@ -2,7 +2,6 @@
 import { supabase } from '../../lib/supabase';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { set, subHours } from 'date-fns';
 import sortArray from 'sort-array';
 import { getWeather } from '../../lib/weather';
 
@@ -30,15 +29,13 @@ export default function Page({ params: { slug } }) {
   }, []);
 
   const fetchVotes = async () => {
-    const { data, error } = await supabase
-      .from('votes')
-      .select('id, restaurant_id, restaurants(name), voter')
-      .eq('lunchgroup_id', slug);
-    if (error) {
-      console.error('Error fetching vote counts:', error);
-      return;
+    try {
+      const response = await axios.get(`/api/fetch_votes/${slug}`);
+      console.log(response);
+      setVotes(response.data);
+    } catch (error) {
+      console.error('Error fetching votes:', error);
     }
-    setVotes(data);
   };
 
   async function fetchLunchgroups() {
