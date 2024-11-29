@@ -31,7 +31,6 @@ export default function Page({ params: { slug } }) {
   const fetchVotes = async () => {
     try {
       const response = await axios.get(`/api/fetch_votes/${slug}`);
-      console.log(response);
       setVotes(response.data);
     } catch (error) {
       console.error('Error fetching votes:', error);
@@ -39,14 +38,11 @@ export default function Page({ params: { slug } }) {
   };
 
   async function fetchLunchgroups() {
-    const { data, error } = await supabase
-      .from('lunch_group')
-      .select('*')
-      .eq('id', slug)
-      .order('id', { ascending: true });
-    if (error) console.log('error', error);
-    else {
-      setLunchgroupdata(data);
+    try {
+      const response = await axios.get(`/api/fetch_lunchgroupdata/${slug}`);
+      setLunchgroupdata(response.data);
+    } catch (error) {
+      console.error('Error fetching lunchgroupdata:', error);
     }
 
     const { data: restaurantsData, error: restaurantsError } = await supabase
