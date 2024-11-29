@@ -45,12 +45,12 @@ export default function Page({ params: { slug } }) {
       console.error('Error fetching lunchgroupdata:', error);
     }
 
-    const { data: restaurantsData, error: restaurantsError } = await supabase
-      .from('restaurants')
-      .select('*')
-      .order('id', { ascending: true });
-    if (restaurantsError) console.log('error', restaurantsError);
-    setRestaurants(restaurantsData);
+    try {
+      const response = await axios.get(`/api/fetch_restaurants/`);
+      setRestaurants(response.data);
+    } catch (error) {
+      console.error('Error fetching unicafe restaurants:', error);
+    }
 
     setLoadingLunchInfo(false);
   }
