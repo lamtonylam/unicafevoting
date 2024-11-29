@@ -1,5 +1,4 @@
 'use client';
-import { supabase } from '../../lib/supabase';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import sortArray from 'sort-array';
@@ -57,18 +56,23 @@ export default function Page({ params: { slug } }) {
 
   const submitVote = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.from('votes').insert([
-      {
+    if (!voteRestaurant || !voterName) {
+      alert('Please enter all required fields');
+      return;
+    }
+    try {
+      await axios.post(`/api/vote_restaurant`, {
         lunchgroup_id: slug,
         restaurant_id: voteRestaurant,
         voter: voterName,
-      },
-    ]);
-    if (error) console.log('error', error);
-    else console.log('success', data);
-    setSelectedRestaurant('');
-    setVoterName('');
-    fetchVotes();
+      });
+      setSelectedRestaurant('');
+      setVoterName('');
+      await fetchVotes();
+    } catch (error) {
+      console.error('Error voting:', error);
+      alert('Error voting');
+    }
   };
 
   useEffect(() => {
