@@ -1,64 +1,53 @@
 'use client';
 
-import { supabase } from './lib/supabase';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
 
 export default function Home() {
   const [lunchgroups, setLunchgroups] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
 
   // creating new lunch group
   const [newLunchGroupName, setnewLunchGroupName] = useState('');
   const [lunchtime, setLunchtime] = useState('');
   const [lunchNotes, setLunchNotes] = useState('');
 
-  // voting lunch restaurants
-  const [voteLunchGroup, setvoteLunchGroup] = useState('');
-  const [voteRestaurant, setSelectedRestaurant] = useState('');
-  const [voterName, setVoterName] = useState('');
-
   useEffect(() => {
     fetchLunchgroups();
   }, []);
 
   async function fetchLunchgroups() {
-    const { data, error } = await supabase
-      .from('lunch_group')
-      .select('*')
-      .order('id', { ascending: true });
-    if (error) console.log('error', error);
-    else setLunchgroups(data);
-
-    const { data: restaurantsData, error: restaurantsError } = await supabase
-      .from('restaurants')
-      .select('*')
-      .order('id', { ascending: true });
-    if (restaurantsError) console.log('error', restaurantsError);
-    setRestaurants(restaurantsData);
+    try {
+      const response = await axios.get('/api/fetch_lunchgroups');
+      setLunchgroups(response.data);
+    } catch (error) {
+      console.error('Error fetching lunch groups:', error);
+    }
   }
 
   const submitNewLunchGroupName = async (e) => {
     e.preventDefault();
+
     const lunchtime_with_timezone = new Date(lunchtime);
     if (newLunchGroupName === '' || lunchtime === '') {
       alert('Please enter all required fields');
       return;
     }
-    const { data, error } = await supabase
-      .from('lunch_group')
-      .insert([
-        {
-          created_by: newLunchGroupName,
-          lunchtime: lunchtime_with_timezone,
-          notes: lunchNotes,
-        },
-      ]);
-    if (error) console.log('error', error);
-    else console.log('success', data);
-    setnewLunchGroupName('');
-    setLunchtime('');
-    fetchLunchgroups();
+
+    try {
+      await axios.post('/api/createlunchgroup', {
+        created_by: newLunchGroupName,
+        lunchtime: lunchtime_with_timezone,
+        notes: lunchNotes,
+      });
+      setnewLunchGroupName('');
+      setLunchtime('');
+      setLunchNotes('');
+      fetchLunchgroups();
+    } catch (error) {
+      console.error('Error creating lunch group:', error);
+      alert('Failed to create lunch group');
+    }
   };
 
   const timefixed = (time) => {

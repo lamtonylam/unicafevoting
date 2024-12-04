@@ -1,5 +1,6 @@
 // unicafe menus
 // api route is /api/unicafe?restaurant=chemicum&date=2024-11-11
+export const revalidate = 60;
 
 export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;

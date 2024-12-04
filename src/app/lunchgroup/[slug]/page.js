@@ -1,8 +1,6 @@
 'use client';
-import { supabase } from '../../lib/supabase';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { set, subHours } from 'date-fns';
 import sortArray from 'sort-array';
 import { getWeather } from '../../lib/weather';
 
@@ -30,52 +28,51 @@ export default function Page({ params: { slug } }) {
   }, []);
 
   const fetchVotes = async () => {
-    const { data, error } = await supabase
-      .from('votes')
-      .select('id, restaurant_id, restaurants(name), voter')
-      .eq('lunchgroup_id', slug);
-    if (error) {
-      console.error('Error fetching vote counts:', error);
-      return;
+    try {
+      const response = await axios.get(`/api/fetch_votes/${slug}`);
+      setVotes(response.data);
+    } catch (error) {
+      console.error('Error fetching votes:', error);
     }
-    setVotes(data);
   };
 
   async function fetchLunchgroups() {
-    const { data, error } = await supabase
-      .from('lunch_group')
-      .select('*')
-      .eq('id', slug)
-      .order('id', { ascending: true });
-    if (error) console.log('error', error);
-    else {
-      setLunchgroupdata(data);
+    try {
+      const response = await axios.get(`/api/fetch_lunchgroupdata/${slug}`);
+      setLunchgroupdata(response.data);
+    } catch (error) {
+      console.error('Error fetching lunchgroupdata:', error);
     }
 
-    const { data: restaurantsData, error: restaurantsError } = await supabase
-      .from('restaurants')
-      .select('*')
-      .order('id', { ascending: true });
-    if (restaurantsError) console.log('error', restaurantsError);
-    setRestaurants(restaurantsData);
+    try {
+      const response = await axios.get("/api/fetch_restaurants/");
+      setRestaurants(response.data);
+    } catch (error) {
+      console.error('Error fetching unicafe restaurants:', error);
+    }
 
     setLoadingLunchInfo(false);
   }
 
   const submitVote = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.from('votes').insert([
-      {
+    if (!voteRestaurant || !voterName) {
+      alert('Please enter all required fields');
+      return;
+    }
+    try {
+      await axios.post("/api/vote_restaurant", {
         lunchgroup_id: slug,
         restaurant_id: voteRestaurant,
         voter: voterName,
-      },
-    ]);
-    if (error) console.log('error', error);
-    else console.log('success', data);
-    setSelectedRestaurant('');
-    setVoterName('');
-    fetchVotes();
+      });
+      setSelectedRestaurant('');
+      setVoterName('');
+      await fetchVotes();
+    } catch (error) {
+      console.error('Error voting:', error);
+      alert('Error voting');
+    }
   };
 
   useEffect(() => {
