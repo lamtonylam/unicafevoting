@@ -45,7 +45,7 @@ export default function Page({ params: { slug } }) {
     }
 
     try {
-      const response = await axios.get("/api/fetch_restaurants/");
+      const response = await axios.get('/api/fetch_restaurants/');
       setRestaurants(response.data);
     } catch (error) {
       console.error('Error fetching unicafe restaurants:', error);
@@ -61,7 +61,7 @@ export default function Page({ params: { slug } }) {
       return;
     }
     try {
-      await axios.post("/api/vote_restaurant", {
+      await axios.post('/api/vote_restaurant', {
         lunchgroup_id: slug,
         restaurant_id: voteRestaurant,
         voter: voterName,
@@ -121,6 +121,11 @@ export default function Page({ params: { slug } }) {
     }
   }, [lunchgroupdata]);
 
+  function convert_timeobject_into_date_only(dateobject) {
+    const new_date = new Date(dateobject);
+    return new_date;
+  }
+
   return (
     <div>
       <a href='/'>Back to frontpage</a>
@@ -167,7 +172,7 @@ export default function Page({ params: { slug } }) {
         <p>Loading...</p>
       ) : (
         <>
-          <h3>Unicafe menus on {lunchtime.slice(0, 10)}</h3>
+          <h3>Unicafe menus on {lunchtime.split(' ')[0]}</h3>
           <ul>
             {unicafeData.map((restaurant) => (
               <li key={restaurant.restaurantName}>
